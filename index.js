@@ -41,6 +41,8 @@ async function createZoneRecord(credentials, accountId, recordName, zone, ip) {
     content: ip,
   };
 
+  console.log('Creating', accountId, zone, recordName, ip);
+
   return new Promise( (resolve, reject) => {
     dnsimple.zones.createZoneRecord(accountId, zone, record)
       .then(resolve)
@@ -52,6 +54,8 @@ async function updateZoneRecord(credentials, accountId, recordId, zone, ip) {
   const dnsimple = DNSimple(credentials);
 
   record = { content: ip };
+
+  console.log('Updating', accountId, zone, recordId, ip);
 
   return new Promise( (resolve, reject) => {
     dnsimple.zones.updateZoneRecord(accountId, zone, recordId, record)
@@ -76,12 +80,12 @@ async function go() {
   console.log('Public IP:', publicIp);
 
   try {
-    const zoneRecordId = await getZoneRecordId(dnsimpleCredentials, accountId, "vpn", "cromwellhaus.com");
+    const zoneRecordId = await getZoneRecordId(dnsimpleCredentials, accountId, entryName, domain);
 
     if (zoneRecordId) {
-      await updateZoneRecord(dnsimpleCredentials, accountId, zoneRecordId, "cromwellhaus.com", publicIp);
+      await updateZoneRecord(dnsimpleCredentials, accountId, zoneRecordId, domain, publicIp);
     } else {
-      await createZoneRecord(dnsimpleCredentials, accountId, "vpn", "cromwellhaus.com", publicIp);
+      await createZoneRecord(dnsimpleCredentials, accountId, entryName, domain, publicIp);
     }
   } catch(e) {
     console.error(e);
